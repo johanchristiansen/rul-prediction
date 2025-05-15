@@ -24,17 +24,26 @@ def load_model():
         # Download model from Hugging Face
         model_path = huggingface_hub.hf_hub_download(
             repo_id="johanchristiansen/rul_prediction",
-            filename="random_forest_model.pkl"
+            filename="random_forest_model.pkl",
+            token=st.secrets.get("HF_TOKEN", None)  # Add token if needed
         )
         # Load model from Hugging Face and scaler from local
         model = joblib.load(model_path)
         scaler = joblib.load('scaler.pkl')
         return model, scaler
     except Exception as e:
-        st.error(f"Error loading model: {e}")
-        raise
+        st.error(f"Error loading model: {str(e)}")
+        return None, None
 
-rf_model, scaler = load_model()
+# Wrap the model loading in try-except
+try:
+    rf_model, scaler = load_model()
+    if rf_model is None or scaler is None:
+        st.error("Failed to load model or scaler. Please check the logs.")
+        st.stop()
+except Exception as e:
+    st.error(f"Application startup error: {str(e)}")
+    st.stop()
 
 # Input widgets
 st.sidebar.header("Input Parameters")
