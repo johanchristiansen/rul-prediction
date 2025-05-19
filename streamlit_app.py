@@ -21,15 +21,18 @@ os.makedirs("output_images", exist_ok=True)
 @st.cache_resource
 def load_model():
     try:
-        token = st.secrets.get("HF_TOKEN", None)
-        # Download model from Hugging Face
-        model_path = huggingface_hub.hf_hub_download(
-            repo_id="johanchristiansen/rul_prediction",
-            filename="random_forest_model.pkl",
-            token=token  # Add token if needed
-        )
-        # Load model from Hugging Face and scaler from local
-        model = joblib.load(model_path)
+        local_model_path = "random_forest_model.pkl"
+        if os.path.exists(local_model_path):
+            model = joblib.load(local_model_path)
+        else:
+            token = st.secrets.get("HF_TOKEN", None)
+            # Download model from Hugging Face
+            model_path = huggingface_hub.hf_hub_download(
+                repo_id="johanchristiansen/rul_prediction",
+                filename="random_forest_model.pkl",
+                token=token  # Add token if needed
+            )
+            model = joblib.load(model_path)
         scaler = joblib.load('scaler.pkl')
         return model, scaler
     except Exception as e:
