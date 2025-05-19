@@ -21,15 +21,15 @@ os.makedirs("output_images", exist_ok=True)
 @st.cache_resource
 def load_model():
     try:
-        local_model_path = "random_forest_model.pkl"
+        local_model_path = "random_forest_model_compressed.pkl"
         if os.path.exists(local_model_path):
             model = joblib.load(local_model_path)
         else:
             token = st.secrets.get("HF_TOKEN", None)
             # Download model from Hugging Face
             model_path = huggingface_hub.hf_hub_download(
-                repo_id="johanchristiansen/rul_prediction",
-                filename="random_forest_model.pkl",
+                repo_id="johanchristiansen/rul_optimized",
+                filename="random_forest_model_compressed.pkl",
                 token=token  # Add token if needed
             )
             model = joblib.load(model_path)
