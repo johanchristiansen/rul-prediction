@@ -33,6 +33,7 @@ def load_model():
         scaler = joblib.load('scaler.pkl')
         return model, scaler
     except Exception as e:
+        print(f"Error loading model: {str(e)}")
         st.error(f"Error loading model: {str(e)}")
         return None, None
 
